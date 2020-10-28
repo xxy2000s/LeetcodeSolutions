@@ -2,11 +2,12 @@
 <h2 align = "center">信息网络建模与仿真实验报告</h2>
 <center>
     <img src = "https://pictures.xiaxuyang.com/img/image-20201028170257787.png"</>
-<br>
-<br>
-<br>
 </center>
 
+&#160;
+&#160;
+&#160;
+&#160;
 
 <h5 style="text-align:center">
 
