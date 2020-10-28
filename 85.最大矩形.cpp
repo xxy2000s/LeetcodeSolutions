@@ -32,7 +32,29 @@
 class Solution {
 public:
     int maximalRectangle(vector<vector<char>>& matrix) {
+        if(matrix.size()==0 || matrix[0].size()==0) return 0;
+        int m=matrix.size();
+        int n=matrix[0].size();
+        int ans = 0;
+        vector<vector<int>> dp(m,vector<int> (n));
+        for(int i=0;i<m;i++){
+          for(int j=0;j<n;j++){
+            if(matrix[i][j]=='1') {
+              if(j==0) dp[i][j]=1;
+              else dp[i][j] = dp[i][j-1]+1;
+            }
+            else dp[i][j]=0;
 
+            int min_width = dp[i][j];
+            for(int col=i;col>=0;col--){
+              int hi = i-col+1;
+              min_width = min(min_width, dp[col][j]);
+              ans = max(ans, min_width*hi);
+          }
+          }
+          
+        }
+        return ans;
     }
 };
 // @lc code=end
