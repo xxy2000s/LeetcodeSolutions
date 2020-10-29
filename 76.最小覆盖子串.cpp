@@ -41,21 +41,26 @@ public:
 
         if(s.size()==0 || t.size()==0) return "";
         unordered_map<char,int> dir;
-        int start=0,end=0;
-        int cnt=0;
+        //two-pointer 遍历 end为循环变量
+        int left=0,end=0;
+        int cnt=0;   //是否找到计数
+        int start=-1;  //start判断是否存在子串
         int ans=s.size();
         for(char c:t) dir[c]++;
         for(;end<s.size();end++){
-            if(--dir[s[end]]>=0) cnt++;
+            if(--dir[s[end]]>=0) cnt++;  
             while(cnt == t.size())
             {
-                if(ans>end-start+1)
-                    ans = end-start+1;
-                start++;
-                if(++dir[s[start]]>0) cnt--;
+                if(ans>=end-left+1)
+                {
+                    ans = end-left+1;  //字串长度
+                    start = left;  //存在 起点更新为left
+                }
+                if(++dir[s[left]]>0) cnt--;  //如果当前要移动的是目的字符 则要cnt-- 如果++dir[s[left]]<0 则说明当前需要的字符已经多了 则不用cnt--.否则需要的字符数目就减少了 要cnt--.
+                left++;  //滑动窗口左边起点右移
             }
         }
-        return cnt==t.size()?s.substring(start, cnt+start):"";
+        return start==-1?"":s.substr(start, ans);  //substr(pos,len)
     }
 };
 // @lc code=end

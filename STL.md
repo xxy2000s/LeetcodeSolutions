@@ -81,3 +81,5 @@ public:
 
 
 
+## String
+**substr():** paremeter:  (pos, len);
