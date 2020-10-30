@@ -11,3 +11,11 @@
 - **HEAPSORT：** 借由 HEAPFY 建堆和 HEAPPOP 堆数组进行排序，时间复杂度为 $O(n\ log\ n)O(n log n)$，空间复杂度为 O(1)O(1)。
 
 **堆结构的一个常见应用是建立优先队列（Priority Queue）。**
+
+# 高级数据结构：
+
+## 优先队列(prior dequeue)
+## 图 (graph)
+## 树状数组(array tree)
+## 前缀树(prefix tree)
+## 线段树(linear tree)
