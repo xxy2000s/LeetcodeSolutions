@@ -187,6 +187,45 @@ func movingWindow() {
 [leetcode480.滑动窗口中位数](https://leetcode-cn.com/problems/sliding-window-median/)
 >这里我们使用multiset来求出中位数（因为multiset底层使用的是二叉搜索树BST的数据结构，插入和删除元素的时间复杂度为O(logn)），利用multiset的自排序功能可以很快求出中位数。multiset作为大小为k的滑动窗口，每次插入新插入元素，需将窗口移动。若新插入的元素小于mid指向的元素，则需要将mid左移（因为新插入的元素比中位数小，那么中位数肯定会被拉低）；插入一个元素后，我们也需要删除一个元素，若需要删除的元素小于mid指向的元素，那么我们应该将mid右移。注意：对于删除元素，我们不能使用erase根据value来删除，因为这样会删除多个值一样的元素，所以我们应该使用lower_bound来找到第一个不小于目标值的数，通过iterator来删掉确定的一个数字。
 关于next()与prev()函数的解释：[Here](https://blog.csdn.net/qq_43152052/article/details/102610540)
+```c++
+//480滑动窗口中位数
+class Solution {
+public:
+      vector<double> medianSlidingWindow(vector<int>& nums, int k) {
+      vector<double> ans;
+      if(nums.size()==0) return ans;
+      int left=0;
+      int right=k;
+      //由于可能testcase [2147483647,2147483647] k=2
+      //发生溢出 所以window设置为long long类型
+      deque<long long> window;
+
+      //插入排序
+      //通过upper_bound lower_bound(底层都是二分法实现)产生一个迭代器
+      //lower_bound准确找到该删的节点 upper_bound找到该插入的节点
+      for(int i=0;i<k;i++){
+        deque<long long>::iterator insert_p = upper_bound(window.begin(), window.end(), nums[i]);
+        //deque的insert要传迭代器和val。
+        window.insert(insert_p, nums[i]);
+      }
+
+      //ans为double类型 除以2.0使long long变为double
+      ans.push_back((window[k/2]+window[(k-1)/2])/2.0);
+      for(int i=k;i<nums.size();i++){
+        deque<long long>::iterator delete_p = lower_bound(window.begin(), window.end(), nums[i-k]);
+        //erase会删除多个同值的 所以必须传元素的迭代器。
+        window.erase(delete_p);
+
+        deque<long long>::iterator insert_p = upper_bound(window.begin(), window.end(), nums[i]);
+        window.insert(insert_p, nums[i]);
+
+        ans.push_back((window[k/2]+window[(k-1)/2])/2.0);
+      }
+      return ans;
+    }
+};
+```
+
 
 
 ## TIPs
@@ -198,6 +237,60 @@ func movingWindow() {
     vector<int> a(20,1);
     vector<int>::iterator tmp = upper_bound(a.begin(), a.end(), val;
     ```
+- 容器适配器 stack、queue 和 priority_queue 没有迭代器
+
+
+## 排序(Sort)
+### 插入排序
+### 实例
+```c++
+//test4
+//C++ upper_bound() lower_bound()
+//480滑动窗口中位数
+#include<iostream>
+#include<algorithm>
+#include<vector>
+#include<unordered_map>
+#include<string>
+#include<deque>
+
+using namespace std;
+int main()
+{
+  vector<int> nums = {1,4,2,3,5,8};
+  int k=5;
+  vector<double> ans;
+  int left=0;
+  int right=k;
+
+  deque<long long> window;
+  for(int i=0;i<k;i++){
+    //begin() refer to the first element
+    //end() refer to the pass-the-end element
+    //deque为空时 end()和begin()一样 window.end()-window.begin()=0
+    //deque不为空时 为长度 
+    //upper_bound没找到时 就是在window.end()的位置 同时对应的迭代器和window.end()一样为空 只有在插入操作后才有值
+    deque<long long>::iterator insert_p = upper_bound(window.begin(), window.end(), nums[i]);
+    cout<<(window.end()-window.begin())<<"   "<<*(insert_p)<<" "<<(insert_p-window.begin())<<endl;
+    window.insert(insert_p, nums[i]);
+  }
+  ans.push_back((window[k/2]+window[(k-1)/2])/2.0);
+  for(int i=k;i<nums.size();i++){
+    deque<long long>::iterator delete_p = lower_bound(window.begin(), window.end(), nums[i-k]);
+    window.erase(delete_p);
+
+    deque<long long>::iterator insert_p = upper_bound(window.begin(), window.end(), nums[i]);
+    window.insert(insert_p, nums[i]);
+
+    ans.push_back((window[k/2]+window[(k-1)/2])/2.0);
+  }
+  cout<<ans[0]<<endl;
+  return 0;
+}
+
+```
+
+
 ## 常用函数：
 ```c++
 //range [first,last)
@@ -229,4 +322,50 @@ int main () {
 ```
 
 
->
+## iterator
+### 实例
+```c++
+//test4
+//480滑动窗口中位数
+#include<iostream>
+#include<algorithm>
+#include<vector>
+#include<unordered_map>
+#include<string>
+#include<deque>
+
+using namespace std;
+int main()
+{
+  vector<int> nums = {1,4,2,3,5,8};
+  int k=5;
+  vector<double> ans;
+  int left=0;
+  int right=k;
+
+  deque<long long> window;
+  for(int i=0;i<k;i++){
+    //begin() refer to the first element
+    //end() refer to the pass-the-end element
+    //deque为空时 end()和begin()一样 window.end()-window.begin()=0
+    //deque不为空时 为长度 
+    //upper_bound没找到时 就是在window.end()的位置 同时对应的迭代器和window.end()一样为空 只有在插入操作后才有值
+    deque<long long>::iterator insert_p = upper_bound(window.begin(), window.end(), nums[i]);
+    cout<<(window.end()-window.begin())<<"   "<<*(insert_p)<<" "<<(insert_p-window.begin())<<endl;
+    window.insert(insert_p, nums[i]);
+  }
+  ans.push_back((window[k/2]+window[(k-1)/2])/2.0);
+  for(int i=k;i<nums.size();i++){
+    deque<long long>::iterator delete_p = lower_bound(window.begin(), window.end(), nums[i-k]);
+    window.erase(delete_p);
+
+    deque<long long>::iterator insert_p = upper_bound(window.begin(), window.end(), nums[i]);
+    window.insert(insert_p, nums[i]);
+
+    ans.push_back((window[k/2]+window[(k-1)/2])/2.0);
+  }
+  cout<<ans[0]<<endl;
+  return 0;
+}
+
+```
