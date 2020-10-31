@@ -62,21 +62,30 @@ public:
       if(nums.size()==0) return ans;
       int left=0;
       int right=k;
-      double temp = 0.0;
-      vector<double> tmp;
-      for(int i=0;i<k;i++) tmp.push_back(nums[i]);
-      sort(tmp.begin(), tmp.end());
-      while(right<=nums.size()){
-          temp = k%2==0?(tmp[right-k/2-1]+tmp[right-k/2])/2:tmp[right-k/2-1];
-          ans.push_back(temp);
-          if(right<nums.size()){
-            for(int j=0;j<k;j++)
-            {
-              
-            }
-            tmp.push_back(nums[right++]);
-            sort(tmp.begin()+right-k, tmp.end());
-          }
+      //由于可能testcase [2147483647,2147483647] k=2
+      //发生溢出 所以window设置为long long类型
+      deque<long long> window;
+
+      //插入排序
+      //通过upper_bound lower_bound(底层都是二分法实现)产生一个迭代器
+      //lower_bound准确找到该删的节点 upper_bound找到该插入的节点
+      for(int i=0;i<k;i++){
+        deque<long long>::iterator insert_p = upper_bound(window.begin(), window.end(), nums[i]);
+        //deque的insert要传迭代器和val。
+        window.insert(insert_p, nums[i]);
+      }
+
+      //ans为double类型 除以2.0使long long变为double
+      ans.push_back((window[k/2]+window[(k-1)/2])/2.0);
+      for(int i=k;i<nums.size();i++){
+        deque<long long>::iterator delete_p = lower_bound(window.begin(), window.end(), nums[i-k]);
+        //erase会删除多个同值的 所以必须传元素的迭代器。
+        window.erase(delete_p);
+
+        deque<long long>::iterator insert_p = upper_bound(window.begin(), window.end(), nums[i]);
+        window.insert(insert_p, nums[i]);
+
+        ans.push_back((window[k/2]+window[(k-1)/2])/2.0);
       }
       return ans;
     }
